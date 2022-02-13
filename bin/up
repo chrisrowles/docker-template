@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+CWD=$(pwd)
+
+# Export env variables
+export $(echo $(cat .env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+
+
+# Declare container names
+declare -a containers=("$HTTP_CONTAINER_NAME" "$DATABASE_CONTAINER_NAME")
+
+
+# Check for project
+if [ -d "$ROWLES_CH_PROJECT" ] 
+then
+    echo "Project directory already exists." 
+else
+    git clone git@github.com:chrisrowles/rowles.ch.git "$PROJECT_WORKSPACE/rowles.ch"
+fi
+
+
+# Check for dependencies
+if [ -d "$ROWLES_CH_PROJECT/vendor" ] 
+then
+    echo "Project vendor directory already exists." 
+else
+    cd $ROWLES_CH_PROJECT
+    composer install
+    cd $CWD
+fi
+
+
+# Check for project-specific environment variables
+if [ -f "$ROWLES_CH_PROJECT/.env" ] 
+then
+    echo "Project .env file already exists." 
+else
+    cd $ROWLES_CH_PROJECT
+    cp .env.example .env
+    cd $CWD
+fi
+
+# Export project-specific environment variables
+export $(echo $(cat $ROWLES_CH_PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+
+# Check for mysql ephemeral storage 
+if [ -d "$MYSQL_EPHEMERAL_STORAGE" ] 
+then
+    echo "MySQL storage already exists." 
+else
+    echo "Creating MySQL storage." 
+    mkdir -p $MYSQL_EPHEMERAL_STORAGE
+fi
+
+# Check for docker network
+echo "Checking whether the $NETWORK_NAME network has been created."
+if [ -z "$(docker network ls --filter name=^"$NETWORK_NAME"$ --format="{{ .Name }}")" ] ; then
+    echo "Creating $NETWORK_NAME network."
+    docker network create --driver=bridge \
+                          --subnet="$NETWORK_SUBNET" \
+                          --gateway="$NETWORK_GATEWAY" \
+                          "$NETWORK_NAME";
+
+    echo "$NETWORK_NAME network created successfully."
+else
+    echo "$NETWORK_NAME network has already been created."
+fi
+
+echo "Spinning up containers."
+docker-compose up -d

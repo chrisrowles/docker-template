@@ -1,0 +1,19 @@
+#!/bin/env bash
+
+export $(echo $(cat .env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+export $(echo $(cat $ROWLES_CH_PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+
+echo "Shutting down containers."
+docker-compose down
+
+network=$(docker network ls --filter name=$NETWORK_NAME --format="{{ .Name }}")
+echo "Checking for $NETWORK_NAME network."
+if [ "$network" == "$NETWORK_NAME" ] ; then
+    echo "Removing network."
+    docker network rm "$network"
+else
+    echo "Network removed."
+fi
+
+echo "Environment has been successfully destroyed."
+echo "MySQL storage has been left intact at $MYSQL_EPHEMERAL_STORAGE"
