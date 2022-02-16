@@ -14,7 +14,7 @@ if [ -d "$PROJECT" ]
 then
     echo "Project directory already exists." 
 else
-    git clone git@github.com:chrisrowles/rowles.ch.git "$PROJECT"
+    git clone "$GIT_URL" "$PROJECT"
 fi
 
 
