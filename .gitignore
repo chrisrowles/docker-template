@@ -1,3 +1,5 @@
 .env
 /tmp/mysql
 /*.code-workspace
+/vhosts/*
+!/vhosts/example.local.conf
