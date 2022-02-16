@@ -8,7 +8,7 @@ services:
             - ${HTTP_LOCAL_PORT}:${HTTP_CONTAINER_PORT}
         volumes:
             - ./vhosts:/etc/apache2/sites-enabled
-            - ${ROWLES_CH_PROJECT}:/var/www/html
+            - ${PROJECT}:/var/www/html
         environment:
             - APP_ENV=${APP_ENV}
             - APP_NAME=${APP_NAME}

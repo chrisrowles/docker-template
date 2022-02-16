@@ -1,7 +1,7 @@
 #!/bin/env bash
 
 export $(echo $(cat .env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
-export $(echo $(cat $ROWLES_CH_PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+export $(echo $(cat $PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 
 echo "Shutting down containers."
 docker-compose down

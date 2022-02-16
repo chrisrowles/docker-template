@@ -9,39 +9,38 @@ export $(echo $(cat .env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 # Declare container names
 declare -a containers=("$HTTP_CONTAINER_NAME" "$DATABASE_CONTAINER_NAME")
 
-
 # Check for project
-if [ -d "$ROWLES_CH_PROJECT" ] 
+if [ -d "$PROJECT" ] 
 then
     echo "Project directory already exists." 
 else
-    git clone git@github.com:chrisrowles/rowles.ch.git "$PROJECT_WORKSPACE/rowles.ch"
+    git clone git@github.com:chrisrowles/rowles.ch.git "$PROJECT"
 fi
 
 
 # Check for dependencies
-if [ -d "$ROWLES_CH_PROJECT/vendor" ] 
+if [ -d "$PROJECT/vendor" ] 
 then
     echo "Project vendor directory already exists." 
 else
-    cd $ROWLES_CH_PROJECT
+    cd $PROJECT
     composer install
     cd $CWD
 fi
 
 
 # Check for project-specific environment variables
-if [ -f "$ROWLES_CH_PROJECT/.env" ] 
+if [ -f "$PROJECT/.env" ] 
 then
     echo "Project .env file already exists." 
 else
-    cd $ROWLES_CH_PROJECT
+    cd $PROJECT
     cp .env.example .env
     cd $CWD
 fi
 
 # Export project-specific environment variables
-export $(echo $(cat $ROWLES_CH_PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+export $(echo $(cat $PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 
 # Check for mysql ephemeral storage 
 if [ -d "$MYSQL_EPHEMERAL_STORAGE" ] 
