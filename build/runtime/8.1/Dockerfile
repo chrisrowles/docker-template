@@ -28,8 +28,8 @@ RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     docker-php-ext-install opcache && \
     pecl install xdebug-3.1.3 && \
     pecl install memcached-3.1.5 && \
-	pecl install redis-5.3.7 && \
-	pecl install apcu-5.1.21 && \
+    pecl install redis-5.3.7 && \
+    pecl install apcu-5.1.21 && \
     docker-php-ext-enable xdebug memcached redis apcu
 
 # Setup apache
