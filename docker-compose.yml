@@ -20,7 +20,7 @@ services:
             - DB_PASS=${DB_PASS}
             - DB_NAME=${DB_NAME}
         networks:
-            rowles:
+            localdev:
                 ipv4_address: ${HTTP_CONTAINER_IP}
 
     database:
@@ -36,10 +36,10 @@ services:
             - MYSQL_USER=${DB_USER}
             - MYSQL_DATABASE=${DB_NAME}
         networks:
-            rowles:
+            localdev:
                 ipv4_address: ${DATABASE_CONTAINER_IP}
 
 networks:
-    rowles:
+    localdev:
         external: true
         name: ${NETWORK_NAME}
