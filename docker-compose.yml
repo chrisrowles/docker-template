@@ -2,7 +2,8 @@ version: "3.8"
 
 services:
     web:
-        image: chrisrowles/rowles-webserver
+        build:
+            context: ./build/runtime/${PHP_VERSION}
         container_name: ${HTTP_CONTAINER_NAME}
         ports:
             - ${HTTP_LOCAL_PORT}:${HTTP_CONTAINER_PORT}
