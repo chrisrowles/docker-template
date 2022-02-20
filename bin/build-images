@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+RUNTIME_DIR=./build/runtime
+
+declare -a versions=("7.4" "8.1")
+
+for v in "${versions[@]}"
+do
+    docker build "$RUNTIME_DIR/$v" -t "php-$v/dev"
+done

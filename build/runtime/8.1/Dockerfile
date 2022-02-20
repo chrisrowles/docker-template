@@ -34,6 +34,7 @@ RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
 
 # Setup apache
 COPY start-apache /usr/local/bin
+RUN chmod -R +x /usr/local/bin/start-apache
 RUN a2enmod headers rewrite
 RUN chown -R www-data:www-data /var/www
 CMD ["start-apache"]

@@ -5,10 +5,6 @@ CWD=$(pwd)
 # Export env variables
 export $(echo $(cat .env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 
-
-# Declare container names
-declare -a containers=("$HTTP_CONTAINER_NAME" "$DATABASE_CONTAINER_NAME")
-
 # Check for project
 if [ -d "$PROJECT" ] 
 then
@@ -17,30 +13,28 @@ else
     git clone "$GIT_URL" "$PROJECT"
 fi
 
-
 # Check for dependencies
 if [ -d "$PROJECT/vendor" ] 
 then
     echo "Project vendor directory already exists." 
 else
-    cd $PROJECT
+    cd "$PROJECT" || exit
     composer install
-    cd $CWD
+    cd "$CWD" || exit
 fi
-
 
 # Check for project-specific environment variables
 if [ -f "$PROJECT/.env" ] 
 then
     echo "Project .env file already exists." 
 else
-    cd $PROJECT
+    cd "$PROJECT" || exit
     cp .env.example .env
-    cd $CWD
+    cd "$CWD" || exit
 fi
 
 # Export project-specific environment variables
-export $(echo $(cat $PROJECT/.env | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
+export $(echo $(cat "$PROJECT/.env" | sed 's/#.*//g' | sed 's/\r//g' | xargs) | envsubst)
 
 # Check for mysql ephemeral storage 
 if [ -d "$MYSQL_EPHEMERAL_STORAGE" ] 
@@ -48,7 +42,7 @@ then
     echo "MySQL storage already exists." 
 else
     echo "Creating MySQL storage." 
-    mkdir -p $MYSQL_EPHEMERAL_STORAGE
+    mkdir -p "$MYSQL_EPHEMERAL_STORAGE"
 fi
 
 # Check for docker network
