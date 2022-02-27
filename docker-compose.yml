@@ -23,6 +23,10 @@ services:
             - DB_USER=${DB_USER}
             - DB_PASS=${DB_PASS}
             - DB_NAME=${DB_NAME}
+            - MH_SENDMAIL_SMTP_ADDR=${MAIL_CONTAINER_IP}
+        depends_on:
+            - database
+            - mailhog
         networks:
             localdev:
                 ipv4_address: ${HTTP_CONTAINER_IP}
@@ -42,6 +46,17 @@ services:
         networks:
             localdev:
                 ipv4_address: ${DATABASE_CONTAINER_IP}
+
+    mailhog:
+        image: mailhog/mailhog:latest
+        container_name: ${MAIL_CONTAINER_NAME}
+        restart: always
+        ports:
+            - ${MAIL_LOCAL_SMTP_PORT:-1025}:${MAIL_CONTAINER_SMTP_PORT:-1025}
+            - ${MAIL_LOCAL_WEB_PORT:-8025}:${MAIL_CONTAINER_WEB_PORT:-8025}
+        networks:
+            localdev:
+                ipv4_address: ${MAIL_CONTAINER_IP}
 
 networks:
     localdev:
