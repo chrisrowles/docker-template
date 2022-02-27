@@ -13,8 +13,11 @@ RUN apt-get -y update && \
     apt-get -y --no-install-recommends install --fix-missing libpcre3-dev libmemcached-dev && \
     apt-get -y --no-install-recommends install --fix-missing apt-utils build-essential git curl libonig-dev && \
     apt-get -y --no-install-recommends install --fix-missing libcurl4 libcurl4-openssl-dev zip openssl && \
-    rm -rf /var/lib/apt/lists/* && \
+    apt-get -y install sendmail && \
     curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Configure sendmail path
+RUN echo "sendmail_path=/usr/sbin/sendmail -t -i" >> /usr/local/etc/php/conf.d/sendmail.ini
 
 # Install PHP extensions
 RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
@@ -31,6 +34,13 @@ RUN docker-php-ext-configure pdo_mysql --with-pdo-mysql=mysqlnd && \
     pecl install redis-5.3.7 && \
     pecl install apcu-5.1.21 && \
     docker-php-ext-enable xdebug memcached redis apcu
+
+# Clean up the image
+RUN rm -rf /var/lib/apt/lists/*
+
+# Setup sendmail
+RUN sed -i '/#!\/bin\/sh/aservice sendmail restart' /usr/local/bin/docker-php-entrypoint
+RUN sed -i '/#!\/bin\/sh/aecho "$(hostname -i)\t$(hostname) $(hostname).localhost" >> /etc/hosts' /usr/local/bin/docker-php-entrypoint
 
 # Setup apache
 COPY start-apache /usr/local/bin

@@ -18,6 +18,7 @@ services:
             - APP_VIEW_PATH=${APP_VIEW_PATH:-/var/www/html/resources/views}
             - APP_CACHE_PATH=${APP_CACHE_PATH:-/var/www/html/public/cache}
             - APP_LOG_PATH=${APP_LOG_PATH:-/var/www/html/logs}
+            - APP_LOG_NAME=${APP_LOG_NAME:-app.log}
             - DB_HOST=${DATABASE_CONTAINER_IP}
             - DB_USER=${DB_USER}
             - DB_PASS=${DB_PASS}
